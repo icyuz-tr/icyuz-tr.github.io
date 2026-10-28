@@ -196,6 +196,8 @@ a { color: inherit; }
 .kact { display: flex; gap: 10px; flex-wrap: wrap; }
 .kact button { font: 600 12px var(--mono); padding: 7px 11px; border-radius: 2px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
 .kact button:hover { border-color: var(--sign); }
+.kwatch { font: 600 12px var(--mono); padding: 7px 11px; border-radius: 2px; background: var(--sign); color: var(--dark); text-decoration: none; }
+.kwatch:hover { filter: brightness(1.08); }
 .kc.hit { animation: hit 1.6s ease; }
 @keyframes hit { 0%, 40% { background: rgba(255,194,26,.10); } 100% { background: transparent; } }
 .kmore { justify-self: start; }
@@ -311,10 +313,10 @@ a { color: inherit; }
       </div>
     </div>
 
-    <div class="stats in" style="animation-delay:1.2s" aria-label="Kanal sayıları">
-      <div class="stat"><b data-count="20" data-suffix="B+">20B+</b><span>takipçi</span></div>
-      <div class="stat"><b data-count="4.7" data-dec="1" data-suffix=" Mn+">4,7 Mn+</b><span>toplam izlenme</span></div>
-      <div class="stat"><b data-count="2.5" data-dec="1" data-suffix=" Mn">2,5 Mn</b><span>tek videoda rekor</span></div>
+    <div class="stats in" id="stats" style="animation-delay:1.2s" aria-label="Kanal sayıları">
+      <div class="stat"><b>29,1B</b><span>takipçi</span></div>
+      <div class="stat"><b>6,8 Mn+</b><span>toplam izlenme</span></div>
+      <div class="stat"><b>3 Mn</b><span>tek videoda rekor</span></div>
     </div>
   </section>
 
@@ -356,7 +358,7 @@ a { color: inherit; }
     <div class="strip-wrap">
       <div class="strip" id="strip"></div>
     </div>
-    <div class="strip-hint"><span>← kaydır →</span><span>İzlenmeler Instagram, Ekim 2026</span></div>
+    <div class="strip-hint"><span>← kaydır →</span><span id="guncel">İzlenmeler: Instagram</span></div>
   </section>
 
   <!-- KAYNAKLAR (veri.js'ten, tools/site.py üretir) -->
@@ -412,11 +414,9 @@ a { color: inherit; }
     </div>
 
     <div class="biz">
-      <div class="kpis">
-        <div class="kpi"><b>%98</b><span>izlenmenin takipçi olmayanlardan geldiği video (keşfete düşme)</span></div>
-        <div class="kpi"><b>27,7B</b><span>tek videonun paylaşılma sayısı</span></div>
-        <div class="kpi"><b>%3,2</b><span>paylaşım oranı (ortalama hesapların birkaç katı)</span></div>
-        <div class="kpi"><b>25–44</b><span>ağırlıklı yaş grubu, Türkiye</span></div>
+      <div class="kpis" id="kpis">
+        <div class="kpi"><b>%98,8</b><span>izlenmenin takipçi olmayanlardan geldiği video (KESİT 24)</span></div>
+        <div class="kpi"><b>28,1B</b><span>tek videonun paylaşılma sayısı (KESİT 24)</span></div>
       </div>
 
       <ul class="formats">
@@ -451,6 +451,7 @@ a { color: inherit; }
   </footer>
 </div>
 
+<script src="istatistik.js"></script>
 <script src="veri.js"></script>
 <script>
 // ---------- Kaynaklar ----------
@@ -467,6 +468,10 @@ a { color: inherit; }
       return '<a href="' + href.replace(/&amp;/g, "&") + '" target="_blank" rel="noopener">' + u + "</a>" + tail;
     });
   }
+  function reelLink(no) {
+    var r = ((window.ICYUZ_STAT || {}).reel || {})[no];
+    return r && r.kod ? '<a class="kwatch" href="https://www.instagram.com/reel/' + r.kod + '/" target="_blank" rel="noopener">Videoyu izle →</a>' : "";
+  }
   function norm(s) { return s.toLocaleLowerCase("tr").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i"); }
   DATA.forEach(function (x, i) {
     var d = document.createElement("details");
@@ -475,7 +480,7 @@ a { color: inherit; }
     d.innerHTML =
       '<summary><img src="v/k/' + x.no + '.jpg" alt="" loading="lazy"><span class="kh"><span class="kn">KESİT ' + x.no + '</span><span class="kb">' + esc(x.baslik) + '</span></span><span class="ch">›</span></summary>' +
       '<div class="kbody"><p class="ktext">' + (x.kaynak ? linkify(x.kaynak) : "Kaynaklar yakında eklenecek.") + '</p>' +
-      '<div class="kact"><button type="button" data-link="k' + x.no + '">Bu bölümün linkini kopyala</button></div></div>';
+      '<div class="kact">' + reelLink(x.no) + '<button type="button" data-link="k' + x.no + '">Bu bölümün linkini kopyala</button></div></div>';
     list.appendChild(d);
   });
   var acik = false;
@@ -513,25 +518,37 @@ a { color: inherit; }
   window.addEventListener("hashchange", git);
 })();
 
-// Video şeridi: sırayı ve izlenmeleri buradan güncelle. url = reel bağlantısı.
-var VIDEOS = [
-  { id: "kuf",         t: "Küfü kesip attın. Gerisi temiz mi?",       s: "KESİT 07 · küf",          v: "2,5 Mn", url: "https://www.instagram.com/icyuz.tr/" },
-  { id: "camasir",     t: "Çamaşırı odada kurutmak",                  s: "KESİT 24 · nem",          v: "860 B",  url: "https://www.instagram.com/icyuz.tr/" },
-  { id: "sicak-yemek", t: "Sıcak yemek dolaba konmaz mı?",            s: "KESİT 19 · buzdolabı",    v: "418 B",  url: "https://www.instagram.com/icyuz.tr/" },
-  { id: "kombi",       t: "Kombiyi gece kapatmak",                    s: "KESİT 10 · ısınma",       v: "398 B",  url: "https://www.instagram.com/icyuz.tr/" },
-  { id: "elektrik",    t: "Elektrik sayacı nasıl sayar?",             s: "KESİT 09 · fatura",       v: "110 B",  url: "https://www.instagram.com/icyuz.tr/" },
-  { id: "su",          t: "Su sayacı suyu ölçmüyor",                  s: "KESİT 08 · fatura",       v: "105 B",  url: "https://www.instagram.com/icyuz.tr/" }
-];
+// ---------- Sayılar (istatistik.js) ----------
+var ST = window.ICYUZ_STAT || { ust: [], kpi: [], seridi: [], reel: {} };
+var AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+function tarih(s) { var p = (s || "").split("-"); return p.length === 3 ? +p[2] + " " + AYLAR[+p[1] - 1] + " " + p[0] : ""; }
+function sayi(n, dec) { return n.toFixed(dec).replace(".", ","); }
 
+if (ST.ust.length) {
+  document.getElementById("stats").innerHTML = ST.ust.map(function (x) {
+    return '<div class="stat"><b data-count="' + x.n + '" data-dec="' + (x.dec || 0) + '" data-suffix="' + x.suffix + '">' +
+      sayi(x.n, x.dec || 0) + x.suffix + '</b><span>' + x.etiket + '</span></div>';
+  }).join("");
+}
+if (ST.kpi.length) {
+  document.getElementById("kpis").innerHTML = ST.kpi.map(function (x) {
+    return '<div class="kpi"><b>' + x.v + '</b><span>' + x.d + '</span></div>';
+  }).join("");
+}
+document.getElementById("guncel").textContent = "İzlenmeler: " + tarih(ST.guncelleme);
+
+// Video şeridi
 var strip = document.getElementById("strip");
-VIDEOS.forEach(function (x) {
+ST.seridi.forEach(function (x) {
+  var r = ST.reel[x.no] || {};
   var a = document.createElement("a");
-  a.className = "card"; a.href = x.url; a.target = "_blank"; a.rel = "noopener";
+  a.className = "card"; a.target = "_blank"; a.rel = "noopener";
+  a.href = r.kod ? "https://www.instagram.com/reel/" + r.kod + "/" : "https://www.instagram.com/icyuz.tr/";
   a.innerHTML =
     '<div class="vid"><img src="v/' + x.id + '.jpg" alt="" loading="lazy">' +
     '<video muted loop playsinline preload="none" poster="v/' + x.id + '.jpg" data-src="v/' + x.id + '.mp4"></video>' +
-    '<span class="views"><svg aria-hidden="true"><use href="#eye"/></svg>' + x.v + '</span></div>' +
-    '<span class="ct">' + x.t + '</span><span class="cs">' + x.s + '</span>';
+    (r.v ? '<span class="views"><svg aria-hidden="true"><use href="#eye"/></svg>' + r.v + '</span>' : '') + '</div>' +
+    '<span class="ct">' + x.t + '</span><span class="cs">KESİT ' + x.no + ' · ' + x.s + '</span>';
   strip.appendChild(a);
 });
 
