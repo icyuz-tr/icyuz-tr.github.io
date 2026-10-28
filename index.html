@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>İçyüz | Nasıl Çalışır?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Her gün kullandığın şeylerin içini kesip gösteren 3D animasyon kanalı. Tüm bağlantılar, seçme videolar ve marka iş birlikleri.">
+<meta property="og:title" content="İçyüz | Nasıl Çalışır?">
+<meta property="og:description" content="Her gün kullandığın şeylerin içini kesip gösteriyoruz.">
+<meta property="og:image" content="v/camasir.jpg">
+<meta name="theme-color" content="#121517">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Düzen: tek kolon "teknik pafta". Üstte kesit logosu, altında bağlantılar, sonra yatay kaydırılan video şeridi,
+   marka anlatımı, iş birliği bloğu ve en altta teknik resim antedi. Marka koyu temalı: tek tema, bilerek. */
+:root {
+  --paper: #121517;     /* zemin: videolardaki grafit */
+  --surface: #1A1F22;   /* kart / blok */
+  --line: #2C3337;      /* ince çizgi */
+  --ink: #E6E8E3;       /* ön plan */
+  --rule: #8B938D;      /* ikincil yazı */
+  --sign: #FFC21A;      /* işaret sarısı: tek vurgu */
+  --dark: #15191C;      /* sarı üstündeki yazı */
+  --warn: #E04A33;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --grid: 230, 232, 227;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background-color: var(--paper); color: var(--ink);
+  font-family: var(--display); font-size: 17px; line-height: 1.55;
+  background-image:
+    linear-gradient(rgba(var(--grid), .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid), .05) 1px, transparent 1px),
+    linear-gradient(rgba(var(--grid), .022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid), .022) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  background-position: center top;
+}
+::selection { background: var(--sign); color: var(--dark); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--sign); outline-offset: 3px; }
+
+.wrap { max-width: 720px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 72px; }
+.wrap > *, .sec > * { min-width: 0; }
+.mono { font-family: var(--mono); }
+.lbl { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--rule); }
+
+/* üst şerit: videodaki çerçeve başlığıyla aynı */
+.bar { display: flex; justify-content: space-between; gap: 12px; padding-block: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; color: var(--ink); border-bottom: 1px solid var(--line); }
+.bar i { display: inline-block; width: 9px; height: 9px; background: var(--sign); margin-right: 8px; vertical-align: .05em; }
+.bar span:last-child { color: var(--rule); }
+
+/* ---------- KAHRAMAN: kesit logosu ---------- */
+.hero { display: grid; gap: 28px; margin-top: -32px; }
+.logo { position: relative; padding-block: 18px 6px; }
+.logo svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tagline { font-size: clamp(24px, 5.4vw, 36px); line-height: 1.12; font-weight: 800; font-variation-settings: "wdth" 84; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+.tagline mark { background: var(--sign); color: var(--dark); padding: 0 .18em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.who { display: flex; align-items: center; gap: 16px; }
+.av { width: 64px; height: 64px; flex: none; border-radius: 50%; background: var(--dark); box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.av svg { width: 100%; height: 100%; display: block; }
+.who-t { display: grid; gap: 2px; min-width: 0; }
+.who-t b { font-size: 18px; font-weight: 800; }
+.who-t span { color: var(--rule); font-size: 15px; }
+
+/* logo animasyonu: kesit çizgisi soldan sağa geçer, arkasından içyüz (taralı kısım) açılır */
+.cut-line { stroke-dasharray: 22 7 4 7; animation: draw 1.4s cubic-bezier(.6,0,.2,1) .3s both; }
+.cut-reveal { animation: reveal 1.4s cubic-bezier(.6,0,.2,1) .3s both; }
+.cut-tick { animation: fadeIn .4s ease 1.5s both; }
+.dim { animation: fadeIn .6s ease 1.7s both; }
+@keyframes draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes reveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.hatch-move { animation: hatch 16s linear infinite; }
+@keyframes hatch { to { transform: translateX(-126px); } }
+
+/* sayılar */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+.stat { padding: 16px 12px 14px; display: grid; gap: 2px; min-width: 0; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat b { font-size: clamp(24px, 6vw, 34px); font-weight: 900; font-variation-settings: "wdth" 80; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-family: var(--mono); font-size: 11.5px; color: var(--rule); line-height: 1.35; }
+
+/* ---------- BAĞLANTILAR ---------- */
+.links { display: grid; gap: 12px; }
+.lk { position: relative; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 14px; padding: 14px 16px; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; transition: border-color .2s, transform .2s cubic-bezier(.3,.7,.2,1); }
+.lk::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent 0 7px, rgba(255,194,26,.10) 7px 9px); transform: translateX(-101%); transition: transform .45s cubic-bezier(.6,0,.2,1); }
+.lk:hover, .lk:focus-visible { border-color: var(--sign); transform: translateY(-2px); }
+.lk:hover::before, .lk:focus-visible::before { transform: none; }
+.lk > * { position: relative; }
+.lk .ic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--ink); }
+.lk .ic svg { width: 22px; height: 22px; }
+.lk .tx { display: grid; gap: 1px; min-width: 0; }
+.lk .tx b { font-size: 18px; font-weight: 800; font-variation-settings: "wdth" 92; }
+.lk .tx span { font-size: 14px; color: var(--rule); }
+.lk .ar { font-family: var(--mono); font-size: 18px; transition: transform .25s; }
+.lk:hover .ar { transform: translateX(4px); }
+.lk.main { background: var(--sign); color: var(--dark); border-color: var(--sign); }
+.lk.main .ic { border-color: var(--dark); }
+.lk.main .tx span { color: rgba(21,25,28,.72); }
+.lk.main::before { background: repeating-linear-gradient(-45deg, transparent 0 7px, rgba(21,25,28,.10) 7px 9px); }
+.lk .soon { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; border: 1px solid var(--line); padding: 2px 6px; color: var(--rule); }
+
+/* ---------- BÖLÜM BAŞLIĞI ---------- */
+.sec { display: grid; gap: 22px; }
+.sec-h { display: grid; gap: 10px; }
+.sec-h .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.sec-h h2 { margin: 0; font-size: clamp(30px, 7vw, 44px); line-height: 1; font-weight: 900; font-variation-settings: "wdth" 76; letter-spacing: -.005em; text-transform: uppercase; text-wrap: balance; }
+.sec-h p { margin: 0; color: var(--rule); max-width: 58ch; }
+
+/* ---------- VİDEO ŞERİDİ ---------- */
+.strip-wrap { margin-inline: calc(-1 * max(18px, env(safe-area-inset-left, 0px))); }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: min(46vw, 210px); gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px max(18px, env(safe-area-inset-left, 0px)) 14px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.card { scroll-snap-align: start; display: grid; gap: 10px; text-decoration: none; min-width: 0; }
+.vid { position: relative; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 4px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s; }
+.vid video, .vid img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.card:hover .vid, .card:focus-visible .vid { border-color: var(--sign); }
+.views { position: absolute; left: 8px; bottom: 8px; font-family: var(--mono); font-size: 12px; font-weight: 600; background: var(--sign); color: var(--dark); padding: 3px 7px; display: flex; gap: 5px; align-items: center; }
+.views svg { width: 12px; height: 12px; }
+.card .ct { font-size: 15px; font-weight: 700; line-height: 1.25; font-variation-settings: "wdth" 92; }
+.card .cs { font-family: var(--mono); font-size: 11.5px; color: var(--rule); }
+.strip-hint { font-family: var(--mono); font-size: 12px; color: var(--rule); display: flex; justify-content: space-between; gap: 12px; }
+
+/* ---------- İÇYÜZ NEDİR ---------- */
+.lead { font-size: clamp(19px, 3.6vw, 22px); line-height: 1.45; margin: 0; max-width: 60ch; }
+.lead b { font-weight: 800; }
+.rules { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.rule { display: grid; grid-template-columns: 56px 1fr; gap: 14px; padding-block: 18px; border-bottom: 1px solid var(--line); }
+.rule .sym { width: 44px; height: 44px; color: var(--sign); }
+.rule h3 { margin: 0 0 4px; font-size: 19px; font-weight: 800; font-variation-settings: "wdth" 90; }
+.rule p { margin: 0; color: var(--rule); font-size: 16px; max-width: 56ch; }
+.rule > div { min-width: 0; }
+
+/* üretim akışı: gerçek bir sıra, bu yüzden oklu */
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.step { padding: 14px 10px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; position: relative; background: var(--surface); }
+.step + .step { border-left: 1px dashed var(--line); }
+.step .k { font-family: var(--mono); font-size: 11px; color: var(--sign); letter-spacing: .08em; }
+.step b { font-size: 15px; font-weight: 800; line-height: 1.15; font-variation-settings: "wdth" 88; }
+.step span { font-size: 12.5px; color: var(--rule); line-height: 1.35; }
+@media (max-width: 560px) {
+  .flow { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 60px 1fr; column-gap: 12px; }
+  .step .k { grid-row: span 2; align-self: center; }
+  .step + .step { border-left: 0; border-top: 1px dashed var(--line); }
+}
+
+/* ---------- MARKALAR İÇİN ---------- */
+.biz { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: clamp(18px, 4vw, 32px); display: grid; gap: 26px; position: relative; overflow: hidden; }
+.biz::after { content: ""; position: absolute; top: 0; right: 0; width: 120px; height: 120px; background: repeating-linear-gradient(-45deg, var(--sign) 0 6px, transparent 6px 14px); clip-path: polygon(100% 0, 0 0, 100% 100%); opacity: .9; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 18px 22px; }
+.kpi { display: grid; gap: 4px; border-left: 2px solid var(--sign); padding-left: 12px; min-width: 0; }
+.kpi b { font-size: 30px; line-height: 1; font-weight: 900; font-variation-settings: "wdth" 80; font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 13.5px; color: var(--rule); line-height: 1.35; }
+.formats { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.formats li { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+.formats b { font-size: 17px; font-weight: 800; }
+.formats .d { grid-column: 1 / -1; color: var(--rule); font-size: 15px; }
+.formats .t { font-family: var(--mono); font-size: 12px; color: var(--sign); align-self: center; }
+.promise { margin: 0; font-size: 15px; padding: 14px 16px; border: 1px dashed var(--rule); }
+.promise b { color: var(--sign); }
+.contact { display: grid; gap: 10px; }
+.mail { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.mail code { font-family: var(--mono); font-size: 16px; font-weight: 600; background: var(--paper); border: 1px solid var(--line); padding: 10px 14px; user-select: all; overflow-wrap: anywhere; min-width: 0; }
+.btn { font: 600 14px var(--mono); padding: 11px 16px; border-radius: 2px; border: 1.5px solid var(--sign); background: var(--sign); color: var(--dark); cursor: pointer; text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn:hover { filter: brightness(1.08); }
+
+/* ---------- KAYNAKLAR ---------- */
+.search { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 0 14px; }
+.search:focus-within { border-color: var(--sign); }
+.search svg { width: 18px; height: 18px; flex: none; color: var(--rule); }
+.search input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); font: 500 16px var(--display); padding: 13px 0; }
+.search input::placeholder { color: var(--rule); }
+.klist { display: grid; border-top: 1px solid var(--line); }
+.kc { border-bottom: 1px solid var(--line); scroll-margin-top: 16px; }
+.kc summary { list-style: none; display: grid; grid-template-columns: 40px 1fr 20px; gap: 14px; align-items: center; padding: 12px 2px; cursor: pointer; }
+.kc summary::-webkit-details-marker { display: none; }
+.kc summary img { width: 40px; aspect-ratio: 9 / 16; max-width: 100%; object-fit: cover; border-radius: 2px; border: 1px solid var(--line); display: block; background: var(--surface); }
+.kc .kh { display: grid; gap: 2px; min-width: 0; }
+.kc .kn { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; color: var(--sign); }
+.kc .kb { font-size: 17px; font-weight: 700; line-height: 1.25; font-variation-settings: "wdth" 92; }
+.kc .ch { font-family: var(--mono); color: var(--rule); transition: transform .25s; }
+.kc[open] .ch { transform: rotate(90deg); color: var(--sign); }
+.kc summary:hover .kb { color: var(--sign); }
+.kbody { padding: 4px 0 20px 54px; display: grid; gap: 12px; }
+.ktext { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--mono); font-size: 13.5px; line-height: 1.65; color: var(--ink); max-width: 72ch; }
+.ktext a { color: var(--sign); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.kact { display: flex; gap: 10px; flex-wrap: wrap; }
+.kact button { font: 600 12px var(--mono); padding: 7px 11px; border-radius: 2px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.kact button:hover { border-color: var(--sign); }
+.kc.hit { animation: hit 1.6s ease; }
+@keyframes hit { 0%, 40% { background: rgba(255,194,26,.10); } 100% { background: transparent; } }
+.kmore { justify-self: start; }
+.kempty { color: var(--rule); padding: 14px 0; }
+@media (max-width: 480px) { .kbody { padding-left: 0; } }
+
+/* ---------- ANTET (teknik resim başlık bloğu) ---------- */
+.antet { display: grid; grid-template-columns: 2fr 1fr 1fr; border: 1.5px solid var(--ink); font-family: var(--mono); font-size: 12px; }
+.antet > div { padding: 8px 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); display: grid; gap: 2px; min-width: 0; }
+.antet > div:nth-child(3n) { border-right: 0; }
+.antet > div:nth-last-child(-n+3) { border-bottom: 0; }
+.antet small { font-size: 10px; letter-spacing: .1em; color: var(--rule); }
+.antet .big { grid-row: span 2; align-content: center; }
+.antet .big svg { width: 100%; max-width: 190px; height: auto; color: var(--ink); }
+.foot { font-family: var(--mono); font-size: 12px; color: var(--rule); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* kaydırınca hafif giriş (destekleyen tarayıcılarda; desteklemeyende içerik zaten görünür) */
+@supports (animation-timeline: view()) {
+  .rv { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+  @keyframes rise { from { opacity: .2; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+}
+/* sayfa açılış sırası */
+.in { animation: up .7s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 420px) {
+  .stat span { font-size: 10.5px; }
+  .antet { grid-template-columns: 1fr 1fr; }
+  .antet .big { grid-column: 1 / -1; grid-row: auto; border-right: 0 !important; }
+  .antet > div { border-right: 1px solid var(--rule) !important; border-bottom: 1px solid var(--rule) !important; }
+  .antet > div:nth-child(odd):not(.big) { border-right: 0 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="9" height="9" fill="#FFC21A"/>
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#15191C" stroke-width="3.2"/>
+    </pattern>
+    <pattern id="hatchS" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#FFC21A"/>
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#15191C" stroke-width="2"/>
+    </pattern>
+    <clipPath id="mkTop"><rect x="0" y="0" width="200" height="104"/></clipPath>
+    <clipPath id="mkBot"><rect x="0" y="104" width="200" height="96"/></clipPath>
+    <symbol id="mk" viewBox="0 0 200 200">
+      <g clip-path="url(#mkTop)"><text x="100" y="146" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="900" font-size="142" fill="#E6E8E3">iç</text></g>
+      <g clip-path="url(#mkBot)"><text x="100" y="146" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="900" font-size="142" fill="url(#hatchS)" stroke="#E6E8E3" stroke-width="4" stroke-linejoin="round">iç</text></g>
+      <line x1="30" y1="104" x2="170" y2="104" stroke="#E6E8E3" stroke-width="2.5" stroke-dasharray="12 4 3 4"/>
+    </symbol>
+    <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <header class="bar in" style="animation-delay:.05s"><span><i></i>İÇYÜZ · BAĞLANTILAR</span><span>KESİT A–A</span></header>
+
+  <!-- KAHRAMAN -->
+  <section class="hero" aria-label="İçyüz">
+    <div class="logo">
+      <svg viewBox="0 0 640 286" role="img" aria-label="içyüz logosu: üst yarısı dolu, alt yarısı kesit taraması">
+        <defs>
+          <clipPath id="wTop"><rect x="0" y="0" width="640" height="116"/></clipPath>
+          <clipPath id="wBot"><rect x="0" y="116" width="640" height="130"/></clipPath>
+          <pattern id="hatchM" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="9" height="9" fill="#FFC21A"/><line x1="0" y1="0" x2="0" y2="9" stroke="#15191C" stroke-width="3.2"/>
+          </pattern>
+        </defs>
+        <g clip-path="url(#wTop)">
+          <text x="60" y="168" textLength="520" lengthAdjust="spacingAndGlyphs" font-family="Archivo, Arial, sans-serif" font-weight="900" font-size="196" fill="#E6E8E3">içyüz</text>
+        </g>
+        <!-- alt yarı: önce kontur (dış görünüş), kesit geçince taralı içyüz açılır -->
+        <g clip-path="url(#wBot)">
+          <text x="60" y="168" textLength="520" lengthAdjust="spacingAndGlyphs" font-family="Archivo, Arial, sans-serif" font-weight="900" font-size="196" fill="none" stroke="#E6E8E3" stroke-width="3" opacity=".35">içyüz</text>
+          <g class="cut-reveal">
+            <text x="60" y="168" textLength="520" lengthAdjust="spacingAndGlyphs" font-family="Archivo, Arial, sans-serif" font-weight="900" font-size="196" fill="url(#hatchM)" stroke="#E6E8E3" stroke-width="5" stroke-linejoin="round">içyüz</text>
+          </g>
+        </g>
+        <g stroke="#E6E8E3" fill="#E6E8E3">
+          <line class="cut-line" x1="22" y1="116" x2="618" y2="116" stroke-width="2.5"/>
+          <g class="cut-tick">
+            <path d="M22 116 v22 M618 116 v22" stroke-width="2.5"/>
+            <path d="M14 132 l8 12 l8 -12 z M610 132 l8 12 l8 -12 z" stroke="none"/>
+            <text x="22" y="104" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="20" text-anchor="middle" stroke="none">A</text>
+            <text x="618" y="104" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="20" text-anchor="middle" stroke="none">A</text>
+          </g>
+        </g>
+        <!-- ölçü çizgisi -->
+        <g class="dim" stroke="#8B938D" fill="#8B938D" font-family="IBM Plex Mono, monospace" font-size="15">
+          <line x1="60" y1="262" x2="580" y2="262" stroke-width="1.2"/>
+          <path d="M60 254 v16 M580 254 v16" stroke-width="1.2"/>
+          <path d="M60 262 l10 -4 v8 z M580 262 l-10 -4 v8 z" stroke="none"/>
+          <rect x="256" y="252" width="128" height="20" fill="#121517" stroke="none"/>
+          <text x="320" y="267" text-anchor="middle" stroke="none">NASIL ÇALIŞIR?</text>
+        </g>
+      </svg>
+    </div>
+
+    <p class="tagline in" style="animation-delay:.9s">Her gün kullandığın şeylerin <mark>içini kesip</mark> gösteriyoruz.</p>
+
+    <div class="who in" style="animation-delay:1.05s">
+      <div class="av"><svg aria-hidden="true"><use href="#mk"/></svg></div>
+      <div class="who-t">
+        <b>@icyuz.tr</b>
+        <span>Evdeki sayaçtan buzdolabına, 3D kesitli kısa videolar. Yüz yok, kaynak var.</span>
+      </div>
+    </div>
+
+    <div class="stats in" style="animation-delay:1.2s" aria-label="Kanal sayıları">
+      <div class="stat"><b data-count="20" data-suffix="B+">20B+</b><span>takipçi</span></div>
+      <div class="stat"><b data-count="4.7" data-dec="1" data-suffix=" Mn+">4,7 Mn+</b><span>toplam izlenme</span></div>
+      <div class="stat"><b data-count="2.5" data-dec="1" data-suffix=" Mn">2,5 Mn</b><span>tek videoda rekor</span></div>
+    </div>
+  </section>
+
+  <!-- BAĞLANTILAR -->
+  <nav class="links" aria-label="Bağlantılar">
+    <a class="lk main in" style="animation-delay:1.3s" href="https://www.instagram.com/icyuz.tr/" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+      <span class="tx"><b>Instagram</b><span>Her hafta yeni kesit · @icyuz.tr</span></span>
+      <span class="ar">→</span>
+    </a>
+    <!-- TODO: YouTube kanal adresini yaz -->
+    <a class="lk in" style="animation-delay:1.38s" href="https://www.youtube.com/@icyuz" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor" stroke="none"/></svg></span>
+      <span class="tx"><b>YouTube</b><span>Shorts ve uzun anlatımlar</span></span>
+      <span class="ar">→</span>
+    </a>
+    <!-- TODO: topluluk / yayın kanalı davet linkini yaz -->
+    <a class="lk in" style="animation-delay:1.46s" href="https://www.instagram.com/icyuz.tr/" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z" stroke-linejoin="round"/><path d="M8 9.5h8M8 12.5h5"/></svg></span>
+      <span class="tx"><b>İçyüz Topluluğu</b><span>Sıradaki konuyu birlikte seçiyoruz</span></span>
+      <span class="ar">→</span>
+    </a>
+    <a class="lk in" style="animation-delay:1.5s" href="#kaynaklar">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h10l4 4v14H5z" stroke-linejoin="round"/><path d="M15 3v4h4M8.5 12h7M8.5 15.5h7M8.5 8.5h3"/></svg></span>
+      <span class="tx"><b>Video kaynakları</b><span>Her videonun dayandığı belgeler</span></span>
+      <span class="ar">↓</span>
+    </a>
+    <a class="lk in" style="animation-delay:1.58s" href="#isbirligi">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M9 7V4.5h6V7M3 12.5h18"/></svg></span>
+      <span class="tx"><b>Marka iş birliği</b><span>Ürününün içyüzünü anlatalım</span></span>
+      <span class="ar">↓</span>
+    </a>
+  </nav>
+
+  <!-- VİDEOLAR -->
+  <section class="sec rv" aria-labelledby="h-kesit">
+    <div class="sec-h">
+      <div class="row"><h2 id="h-kesit">Seçme kesitler</h2><span class="lbl">En çok izlenen</span></div>
+    </div>
+    <div class="strip-wrap">
+      <div class="strip" id="strip"></div>
+    </div>
+    <div class="strip-hint"><span>← kaydır →</span><span>İzlenmeler Instagram, Ekim 2026</span></div>
+  </section>
+
+  <!-- KAYNAKLAR (veri.js'ten, tools/site.py üretir) -->
+  <section class="sec rv" id="kaynaklar" aria-labelledby="h-kay">
+    <div class="sec-h">
+      <div class="row"><h2 id="h-kay">Kaynaklar</h2><span class="lbl" id="kcount">Her video, belgesiyle</span></div>
+      <p>Her videonun dayandığı çalışmalar, standartlar ve hesaplar burada. Videonun numarası ekranın sağ üst köşesinde yazar (KESİT 24 gibi).</p>
+    </div>
+    <label class="search" for="ara">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+      <input id="ara" type="search" placeholder="Konu ya da numara ara: küf, 24, kombi…" autocomplete="off">
+    </label>
+    <div class="klist" id="klist"></div>
+    <button class="btn ghost kmore" id="kmore" type="button" hidden>Tümünü göster</button>
+  </section>
+
+  <!-- İÇYÜZ NEDİR -->
+  <section class="sec rv" aria-labelledby="h-ne">
+    <div class="sec-h">
+      <div class="row"><h2 id="h-ne">İçyüz nedir?</h2><span class="lbl">Künye</span></div>
+    </div>
+    <p class="lead"><b>İçyüz</b>, “işin içyüzü” deyiminden geliyor. Sayacın faturayı nasıl yazdığını, kombinin gece ne yaptığını, kesip attığın küfün ekmekte nereye kadar gittiğini 3D kesitlerle gösteriyoruz. Anneden duyduğun kuralları, ev alışkanlıklarını ve her gün dokunduğun cihazları ölçüyle, kaynakla anlatıyoruz.</p>
+
+    <div class="rules">
+      <div class="rule">
+        <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6h18l6 6v26H10z"/><path d="M28 6v6h6"/><path d="M15 20h14M15 25h14M15 30h9"/></svg>
+        <div><h3>Kaynaksız video yok</h3><p>Her videonun açıklamasında dayandığı çalışmalar, standartlar ve kurum yayınları var. Bilgi bizim yorumumuz değil, belgeye dayanıyor.</p></div>
+      </div>
+      <div class="rule">
+        <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><circle cx="22" cy="22" r="15"/><path d="M5 22h34" stroke-dasharray="6 3 2 3"/><path d="M12 22a10 10 0 0 0 20 0" /></svg>
+        <div><h3>Yüz yok, kesit var</h3><p>Kamerada kimse yok. Ekranda yalnızca anlatılan şey var: içi açılmış, ölçülü, adım adım.</p></div>
+      </div>
+      <div class="rule">
+        <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9h32v20H20l-8 7v-7H6z" stroke-linejoin="round"/><path d="M15 19l4 4 9-9"/></svg>
+        <div><h3>Yorumları okuyoruz</h3><p>Su sayacı, elektrik sayacı ve sayaç hilesi videoları izleyici sorusundan çıktı. Bir uzman düzeltme yazarsa bir sonraki videoda düzeltiyoruz.</p></div>
+      </div>
+    </div>
+
+    <div class="flow" aria-label="Bir video nasıl hazırlanıyor">
+      <div class="step"><span class="k">01 →</span><b>Soru</b><span>Yorumdan, evden, gündemden</span></div>
+      <div class="step"><span class="k">02 →</span><b>Kaynak</b><span>Standart, makale, kurum verisi</span></div>
+      <div class="step"><span class="k">03 →</span><b>Senaryo</b><span>60 saniyede tek net cevap</span></div>
+      <div class="step"><span class="k">04 →</span><b>3D kesit</b><span>Her kare elle kurulur</span></div>
+      <div class="step"><span class="k">05 ✓</span><b>Yayın</b><span>Kaynaklar açıklamada</span></div>
+    </div>
+  </section>
+
+  <!-- İŞ BİRLİĞİ -->
+  <section class="sec rv" id="isbirligi" aria-labelledby="h-biz">
+    <div class="sec-h">
+      <div class="row"><h2 id="h-biz">Markalar için</h2><span class="lbl">İş birliği</span></div>
+      <p>Ürününün nasıl çalıştığını, izleyicinin gerçekten merak ettiği bir soruya bağlayıp anlatıyoruz. Reklam gibi değil, İçyüz videosu gibi.</p>
+    </div>
+
+    <div class="biz">
+      <div class="kpis">
+        <div class="kpi"><b>%98</b><span>izlenmenin takipçi olmayanlardan geldiği video (keşfete düşme)</span></div>
+        <div class="kpi"><b>27,7B</b><span>tek videonun paylaşılma sayısı</span></div>
+        <div class="kpi"><b>%3,2</b><span>paylaşım oranı (ortalama hesapların birkaç katı)</span></div>
+        <div class="kpi"><b>25–44</b><span>ağırlıklı yaş grubu, Türkiye</span></div>
+      </div>
+
+      <ul class="formats">
+        <li><b>Sponsorlu kesit</b><span class="t">60–90 sn</span><span class="d">Baştan sona ürünün ya da teknolojinin içyüzü: filtre, motor, sensör, yalıtım… 3D modelle.</span></li>
+        <li><b>Video içi bölüm</b><span class="t">10–15 sn</span><span class="d">Konuyla bağlantılı bir İçyüz videosunda markana ayrılmış kısa kesit.</span></li>
+        <li><b>Hikâye + bağlantı</b><span class="t">24 saat</span><span class="d">Video yayınlandığında hikâyede yönlendirme ve bu sayfada bağlantı.</span></li>
+      </ul>
+
+      <p class="promise"><b>Tek şartımız doğruluk.</b> Ürün hakkında kanıtlanamayan bir iddiayı anlatmıyoruz. İzleyicinin bize güveni, markana geçecek olan güvenin kendisi.</p>
+
+      <div class="contact">
+        <span class="lbl">İletişim</span>
+        <div class="mail">
+          <!-- TODO: kanal için açılacak e-posta -->
+          <code id="mail">isbirligi.icyuz@gmail.com</code>
+          <button class="btn" id="copy" type="button">Kopyala</button>
+          <a class="btn ghost" href="https://ig.me/m/icyuz.tr" target="_blank" rel="noopener">Instagram DM →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANTET -->
+  <footer class="sec">
+    <div class="antet" aria-label="Pafta bilgisi">
+      <div class="big"><small>PROJE</small><svg viewBox="0 0 200 200" style="max-width:56px"><use href="#mk"/></svg><b style="font-size:14px">İÇYÜZ · NASIL ÇALIŞIR?</b></div>
+      <div><small>ÇİZEN</small>@icyuz.tr</div>
+      <div><small>ÖLÇEK</small>1:1</div>
+      <div><small>PAFTA</small>01 / 01</div>
+      <div><small>REV.</small><span id="rev">A · 2026</span></div>
+    </div>
+    <div class="foot"><span>© 2026 İçyüz</span><span>Tüm kaynaklar video açıklamalarında ↓</span></div>
+  </footer>
+</div>
+
+<script src="veri.js"></script>
+<script>
+// ---------- Kaynaklar ----------
+(function () {
+  var DATA = window.ICYUZ_KAYNAK || [], ILK = 5;
+  var list = document.getElementById("klist"), more = document.getElementById("kmore"), ara = document.getElementById("ara");
+  document.getElementById("kcount").textContent = DATA.length + " video";
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var URL_RE = /(https?:\/\/[^\s<]+|\b[\w-]+(?:\.[\w-]+)*\.(?:com|org|gov|edu|net|int|de|uk|tr|io|hk|au|fr|nl|ch|eu|ca|jp|info)(?:\/[^\s<,;]*)?)/gi;
+  function linkify(s) {
+    return esc(s).replace(URL_RE, function (u) {
+      var tail = (u.match(/[.)\]]+$/) || [""])[0]; u = u.slice(0, u.length - tail.length);
+      var href = /^https?:/i.test(u) ? u : "https://" + u;
+      return '<a href="' + href.replace(/&amp;/g, "&") + '" target="_blank" rel="noopener">' + u + "</a>" + tail;
+    });
+  }
+  function norm(s) { return s.toLocaleLowerCase("tr").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i"); }
+  DATA.forEach(function (x, i) {
+    var d = document.createElement("details");
+    d.className = "kc"; d.id = "k" + x.no; d.dataset.q = norm(x.no + " " + +x.no + " " + x.baslik + " " + x.kaynak);
+    if (i === 0) d.open = true;
+    d.innerHTML =
+      '<summary><img src="v/k/' + x.no + '.jpg" alt="" loading="lazy"><span class="kh"><span class="kn">KESİT ' + x.no + '</span><span class="kb">' + esc(x.baslik) + '</span></span><span class="ch">›</span></summary>' +
+      '<div class="kbody"><p class="ktext">' + (x.kaynak ? linkify(x.kaynak) : "Kaynaklar yakında eklenecek.") + '</p>' +
+      '<div class="kact"><button type="button" data-link="k' + x.no + '">Bu bölümün linkini kopyala</button></div></div>';
+    list.appendChild(d);
+  });
+  var acik = false;
+  function filtre() {
+    var q = norm(ara.value.trim()), n = 0, gor = 0;
+    list.querySelectorAll(".kc").forEach(function (d) {
+      var es = !q || d.dataset.q.indexOf(q) > -1;
+      if (es) n++;
+      d.hidden = !es || (!q && !acik && n > ILK);
+      if (!d.hidden) gor++;
+    });
+    more.hidden = !!q || acik || DATA.length <= ILK;
+    more.textContent = "Tümünü göster (" + DATA.length + ")";
+    var bos = list.querySelector(".kempty");
+    if (!gor && !bos) { bos = document.createElement("p"); bos.className = "kempty"; bos.textContent = "Bu aramayla eşleşen video yok. Numarayla da arayabilirsin."; list.appendChild(bos); }
+    if (gor && bos) bos.remove();
+  }
+  ara.addEventListener("input", filtre);
+  more.addEventListener("click", function () { acik = true; filtre(); });
+  list.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-link]"); if (!b) return;
+    var u = location.href.split("#")[0] + "#" + b.dataset.link;
+    function ok() { b.textContent = "Kopyalandı ✓"; setTimeout(function () { b.textContent = "Bu bölümün linkini kopyala"; }, 1800); }
+    try { navigator.clipboard.writeText(u).then(ok, function () { b.textContent = u; }); } catch (err) { b.textContent = u; }
+  });
+  // #k24 gibi bir adresle gelinirse o videoyu aç ve göster
+  function git() {
+    var m = location.hash.match(/^#k?(\d{1,3})$/); if (!m) return;
+    var d = document.getElementById("k" + ("0" + m[1]).slice(-2)); if (!d) return;
+    acik = true; filtre(); d.open = true;
+    d.classList.remove("hit"); void d.offsetWidth; d.classList.add("hit");
+    d.scrollIntoView({ block: "start" });
+  }
+  filtre(); git();
+  window.addEventListener("hashchange", git);
+})();
+
+// Video şeridi: sırayı ve izlenmeleri buradan güncelle. url = reel bağlantısı.
+var VIDEOS = [
+  { id: "kuf",         t: "Küfü kesip attın. Gerisi temiz mi?",       s: "KESİT 07 · küf",          v: "2,5 Mn", url: "https://www.instagram.com/icyuz.tr/" },
+  { id: "camasir",     t: "Çamaşırı odada kurutmak",                  s: "KESİT 24 · nem",          v: "860 B",  url: "https://www.instagram.com/icyuz.tr/" },
+  { id: "sicak-yemek", t: "Sıcak yemek dolaba konmaz mı?",            s: "KESİT 19 · buzdolabı",    v: "418 B",  url: "https://www.instagram.com/icyuz.tr/" },
+  { id: "kombi",       t: "Kombiyi gece kapatmak",                    s: "KESİT 10 · ısınma",       v: "398 B",  url: "https://www.instagram.com/icyuz.tr/" },
+  { id: "elektrik",    t: "Elektrik sayacı nasıl sayar?",             s: "KESİT 09 · fatura",       v: "110 B",  url: "https://www.instagram.com/icyuz.tr/" },
+  { id: "su",          t: "Su sayacı suyu ölçmüyor",                  s: "KESİT 08 · fatura",       v: "105 B",  url: "https://www.instagram.com/icyuz.tr/" }
+];
+
+var strip = document.getElementById("strip");
+VIDEOS.forEach(function (x) {
+  var a = document.createElement("a");
+  a.className = "card"; a.href = x.url; a.target = "_blank"; a.rel = "noopener";
+  a.innerHTML =
+    '<div class="vid"><img src="v/' + x.id + '.jpg" alt="" loading="lazy">' +
+    '<video muted loop playsinline preload="none" poster="v/' + x.id + '.jpg" data-src="v/' + x.id + '.mp4"></video>' +
+    '<span class="views"><svg aria-hidden="true"><use href="#eye"/></svg>' + x.v + '</span></div>' +
+    '<span class="ct">' + x.t + '</span><span class="cs">' + x.s + '</span>';
+  strip.appendChild(a);
+});
+
+// Görünen videolar sessiz döngüde oynar, görünmeyenler durur.
+var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!reduce && "IntersectionObserver" in window) {
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) {
+        if (!v.src) v.src = v.dataset.src;
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+      } else v.pause();
+    });
+  }, { threshold: 0.6 });
+  strip.querySelectorAll("video").forEach(function (v) { io.observe(v); });
+}
+
+// Sayılar açılışta sıfırdan sayar (metin zaten son değerde, JS yoksa da doğru görünür).
+if (!reduce) {
+  document.querySelectorAll("[data-count]").forEach(function (el) {
+    var end = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), suf = el.dataset.suffix || "";
+    var t0 = null, dur = 1400, delay = 1300;
+    function fmt(n) { return n.toFixed(dec).replace(".", ",") + suf; }
+    el.textContent = fmt(0);
+    setTimeout(function () {
+      requestAnimationFrame(function step(ts) {
+        if (!t0) t0 = ts;
+        var k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(end * e);
+        if (k < 1) requestAnimationFrame(step);
+      });
+    }, delay);
+  });
+}
+
+// E-posta kopyala
+document.getElementById("copy").addEventListener("click", function () {
+  var b = this, m = document.getElementById("mail").textContent;
+  function ok() { b.textContent = "Kopyalandı ✓"; setTimeout(function () { b.textContent = "Kopyala"; }, 1800); }
+  function sel() { var r = document.createRange(); r.selectNodeContents(document.getElementById("mail")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Seçildi, kopyala"; }
+  try { navigator.clipboard.writeText(m).then(ok, sel); } catch (e) { sel(); }
+});
+</script>
+</body>
+</html>
