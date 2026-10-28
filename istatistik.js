@@ -5,8 +5,8 @@ window.ICYUZ_STAT = {
 
   // Kahraman bölümündeki üç sayı. n = sayaçta kullanılan değer, suffix = sonuna eklenen.
   ust: [
-    { n: 29.1, dec: 1, suffix: "B",     etiket: "takipçi" },
-    { n: 6.8,  dec: 1, suffix: " Mn+",  etiket: "toplam izlenme" },
+    { n: 29.2, dec: 1, suffix: "B",     etiket: "takipçi" },
+    { n: 6.9,  dec: 1, suffix: " Mn+",  etiket: "toplam izlenme" },
     { n: 3,    dec: 0, suffix: " Mn",   etiket: "tek videoda rekor" }
   ],
 
@@ -15,7 +15,7 @@ window.ICYUZ_STAT = {
     { v: "%98,8", d: "izlenmenin takipçi olmayanlardan geldiği video (KESİT 24, keşfete düşme)" },
     { v: "28,1B", d: "tek videonun paylaşılma sayısı (KESİT 24)" },
     { v: "%3,2",  d: "aynı videonun paylaşım oranı: her 31 izlenmeden biri gönderiyor" },
-    { v: "20 gün", d: "hesabın açılışından 29,1B takipçiye" }
+    { v: "20 gün", d: "hesabın açılışından 29,2B takipçiye" }
   ],
 
   // Video şeridi (en çok izlenenler). id = site/v/<id>.mp4 ve .jpg
@@ -30,23 +30,24 @@ window.ICYUZ_STAT = {
 
   // Her yayındaki video: Instagram reel kodu ve izlenme. Kaynaklar listesi "Videoyu izle" linkini buradan alır.
   reel: {
-    "25": { kod: "DfAeUYcu_fV", v: "252 B" },
-    "24": { kod: "De9zR6Kud7y", v: "868 B" },
-    "23": { kod: "De7Wwumu-bg", v: "23,7 B" },
-    "21": { kod: "De45DwEu2Fx", v: "40,7 B" },
+    "26": { kod: "DfC6roWOtwG", v: "0" },
+    "25": { kod: "DfAeUYcu_fV", v: "300 B" },
+    "24": { kod: "De9zR6Kud7y", v: "875 B" },
+    "23": { kod: "De7Wwumu-bg", v: "23,9 B" },
+    "21": { kod: "De45DwEu2Fx", v: "40,8 B" },
     "20": { kod: "De2NBPGOINE", v: "104 B" },
     "19": { kod: "Deze1Jku4BI", v: "1,1 Mn" },
-    "17": { kod: "DewzqwZOAO-", v: "18,2 B" },
-    "16": { kod: "DeuQ3DjOelQ", v: "143 B" },
-    "15": { kod: "DerqvFTNorc", v: "20,3 B" },
+    "17": { kod: "DewzqwZOAO-", v: "18,3 B" },
+    "16": { kod: "DeuQ3DjOelQ", v: "144 B" },
+    "15": { kod: "DerqvFTNorc", v: "20,4 B" },
     "13": { kod: "Deo-wp4gMM9", v: "148 B" },
-    "12": { kod: "DemlSL8g7js", v: "21,4 B" },
+    "12": { kod: "DemlSL8g7js", v: "21,5 B" },
     "10": { kod: "DekBsaix0As", v: "489 B" },
     "09": { kod: "Deexn7bgz7C", v: "230 B" },
     "08": { kod: "DecKoVcgnGH", v: "157 B" },
     "07": { kod: "DehWZ5egjyy", v: "3 Mn" },
     "06": { kod: "DeZ3igIxbxS", v: "107 B" },
-    "05": { kod: "DeSEBsbxwL7", v: "21,5 B" },
+    "05": { kod: "DeSEBsbxwL7", v: "21,6 B" },
     "04": { kod: "DeRd2fkOarg", v: "19,4 B" },
     "03": { kod: "DeP1qS0u1v0", v: "18,4 B" },
     "02": { kod: "DeThSgzADZM", v: "26,2 B" },
