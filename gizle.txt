@@ -1,4 +1,2 @@
 # Yayında olmasına rağmen sitede görünmesini istemediğin video numaraları (boşlukla/satırla ayır)
-27
-28
 14
